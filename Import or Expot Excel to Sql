@@ -1,3 +1,46 @@
 ##Documentation link:
 
 https://docs.laravel-excel.com/3.1/imports/custom-csv-settings.html
+
+##import> MarksImport::
+    use App\Mark;
+    use Maatwebsite\Excel\Concerns\ToModel;
+    class MarksImport implements ToModel
+    {
+        /**
+        * @param array $row
+        *
+        * @return \Illuminate\Database\Eloquent\Model|null
+        */
+        public function model(array $row)
+        {
+          if (!isset($row[0])) {
+               return null;
+           }
+
+          Mark::create([
+            'Roll'     => $row[0],
+            'Reg'    => $row[1],
+            'Mark'    => $row[2],
+            'exam_name'     => request()->exam_name,
+            'department'     => request()->department,
+            'semester'     => request()->semester,
+            'Subject'     => request()->Subject,
+          ]);
+        }
+    }
+    
+    ##in controller add this:::
+    ///excel data export/impot
+       //export
+        public function export()
+        {
+            return Excel::download(new MarksExport, 'marks.xlsx');
+        }
+        //import
+        public function import(Request $request)
+         {
+              Excel::import(new MarksImport,request()->file('file'));
+              return back()->with('status','Result Added Successfully!!');
+         }
+
