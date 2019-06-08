@@ -1,0 +1,4 @@
+use 'https://' in the link
+
+
+href="https://{{$link from database}}"
